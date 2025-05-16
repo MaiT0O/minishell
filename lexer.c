@@ -6,33 +6,17 @@
 /*   By: ebansse <ebansse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 11:47:47 by ebansse           #+#    #+#             */
-/*   Updated: 2025/05/16 17:00:41 by ebansse          ###   ########.fr       */
+/*   Updated: 2025/05/16 17:34:34 by ebansse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*substrdup(const char *src, int start, int len)
-{
-	char	*str;
-	int		i;
-
-	str = malloc(len + 1);
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (i < len && src[start + i])
-	{
-		str[i] = src[start + i];
-		i++;
-	}
-	str[i] = '\0';
-	return (str);
-}
-
 t_token	*new_token(char *value, t_token_type type)
 {
-	t_token	*token = malloc(sizeof(t_token));
+	t_token	*token;
+
+	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->value = value;
@@ -41,13 +25,10 @@ t_token	*new_token(char *value, t_token_type type)
 	return (token);
 }
 
-bool	add_token(t_token **head, t_token *new)
+void	add_token(t_token **head, t_token *new)
 {
 	if (!*head)
-	{
 		*head = new;
-		return (true);
-	}
 	else
 	{
 		t_token *tmp = *head;
@@ -55,24 +36,35 @@ bool	add_token(t_token **head, t_token *new)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
-	return (true);
 }
 
-bool	tokenisation(t_token *head, char *line, int i)
+int	tokenisation(t_token *head, char *line, int i)
 {
+	int	start;
+
+	start = 0;
 	if (line[i] == '>' && line[i + 1] == '>')
-		add_token(&head, new_token(ft_strdup(">>"), T_REDIR_APPEND));
+		return (add_token(&head, new_token(ft_strdup(">>"), T_REDIR_APPEND))
+			, i += 2);
 	else if (line[i] == '<' && line[i + 1] == '<')
-		add_token(&head, new_token(ft_strdup("<<"), T_HEREDOC));
+		return (add_token(&head, new_token(ft_strdup("<<"), T_HEREDOC))
+			, i += 2);
 	else if (line[i] == '|')
-		add_token(&head, new_token(ft_strdup("|"), T_PIPE));
+		return (add_token(&head, new_token(ft_strdup("|"), T_PIPE)), i++);
 	else if (line[i] == '<')
-		add_token(&head, new_token(ft_strdup("<"), T_REDIR_IN));
+		return (add_token(&head, new_token(ft_strdup("<"), T_REDIR_IN)), i++);
 	else if (line[i] == '>')
+		return (add_token(&head, new_token(ft_strdup(">"), T_REDIR_OUT)), i++);
+	else
 	{
-		add_token(&head, new_token(ft_strdup(">"), T_REDIR_OUT));
-		return (i++);
+		start = i;
+		while (line[i] && !ft_isspace(line[i]) && line[i] != '|'
+			&& line[i] != '<' && line[i] != '>')
+			i++;
+		return (add_token(&head, new_token(substrdup(line, start, i - start)
+			, T_WORD)), i);
 	}
+	return (i);
 }
 
 t_token	*lexer(char *line)
@@ -84,22 +76,12 @@ t_token	*lexer(char *line)
 
 	while (line[i])
 	{
-		if (line[i] == 32 || (line[i] >= 7 && line[i] <= 13))
+		if (ft_isspace(line[i]))
 		{
 			i++;
 			continue;
 		}
-		res = i;
 		i = tokenisation(head, line, i);
-		if (res == i)
-		{
-			start = i;
-			while (line[i] && !isspace(line[i]) && line[i] != '|' &&
-					line[i] != '<' && line[i] != '>') {
-				i++;
-			}
-			add_token(&head, new_token(substrdup(line, start, i - start), T_WORD));
-		}
 	}
     
 }

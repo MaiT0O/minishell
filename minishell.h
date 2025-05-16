@@ -65,4 +65,8 @@ typedef struct s_shell
 	int		running;	 // état du shell (utile pour signaux)
 }	t_shell;
 
+/*utils.c*/
+bool	ft_isspace(char c);
+char	*substrdup(const char *src, int start, int len);
+
 #endif
