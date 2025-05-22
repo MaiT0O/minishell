@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ebansse <ebansse@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/22 13:15:41 by ebansse           #+#    #+#             */
+/*   Updated: 2025/05/22 16:51:30 by ebansse          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	prompt_loop(t_shell *shell)
@@ -5,18 +17,17 @@ void	prompt_loop(t_shell *shell)
 	char	*line;
 	t_cmd	*cmd;
 
+	message();
 	while (1)
 	{
-		// Affiche le prompt et lit l'entrée utilisateur
-		line = readline("minishell$ ");
-		if (!line) // Ctrl+D (EOF)
+		line = readline(PROMPT_PRINT);
+		if (!line)
 		{
 			write(1, "exit\n", 5);
 			break;
 		}
-
 		if (*line)
-			add_history(line); // Historique (si readline est autorisé)
+			add_history(line);
 
 		// (Étape future) expansion des variables d'environnement
 		/*line = expand_variables(line, shell->env);
@@ -26,12 +37,12 @@ void	prompt_loop(t_shell *shell)
 		if (cmd)
 			execute_commands(cmd, shell); // exécute la/les commande(s)
 
-		free_cmds(cmd);
-		free(line);*/
+		free_cmds(cmd);*/
+		free(line);
 	}
 }
 
-int	main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv)
 {
 	t_shell	shell;
 

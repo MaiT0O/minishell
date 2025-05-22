@@ -6,7 +6,7 @@
 /*   By: ebansse <ebansse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 11:47:47 by ebansse           #+#    #+#             */
-/*   Updated: 2025/05/16 17:34:34 by ebansse          ###   ########.fr       */
+/*   Updated: 2025/05/22 14:40:04 by ebansse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,5 @@ t_token	*lexer(char *line)
 		}
 		i = tokenisation(head, line, i);
 	}
-    
+    return (head);
 }

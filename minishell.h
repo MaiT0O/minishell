@@ -26,8 +26,8 @@ typedef enum e_token_type
 	T_HEREDOC       // <<
 }	t_token_type;
 
-
-typedef struct s_token {
+typedef struct s_token
+{
 	char			*value;
 	t_token_type	type;
 	struct s_token	*next;
@@ -68,5 +68,9 @@ typedef struct s_shell
 /*utils.c*/
 bool	ft_isspace(char c);
 char	*substrdup(const char *src, int start, int len);
+void	message(void);
+t_token	*lexer(char *line);
+
+# define PROMPT_PRINT "\033[1;35mminishell $ \033[0m"
 
 #endif

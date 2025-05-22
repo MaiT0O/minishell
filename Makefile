@@ -6,14 +6,15 @@
 #    By: ebansse <ebansse@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/15 11:03:46 by ebansse           #+#    #+#              #
-#    Updated: 2025/05/16 14:49:01 by ebansse          ###   ########.fr        #
+#    Updated: 2025/05/22 16:52:33 by ebansse          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-LD_FLAGS = -Llibft -l:libft.a
-SRCS = main.c lexer.c
+CFLAGS = #-Wall -Wextra -Werror
+INCLUDES = -I ./libft
+LIB = ./libft/libft.a -lreadline
+SRCS = main.c lexer.c utils.c parser.c
 OBJS = $(SRCS:.c=.o)
 NAME = minishell
 
@@ -31,21 +32,20 @@ RESET = \033[0m
 all: $(NAME)
 
 %.o: %.c
-	@$(CC) $(CFLAGS) -Ilibft -c $< -o $@
+	@$(CC) $(CFLAGS) ${INCLUDES} -c $< -o $@
 
 $(NAME): make_libs $(OBJS)
-	@$(CC) $(CFLAGS) $(LD_FLAGS) $(OBJS) -o $(NAME)
-	@echo "${CYAN} $(NAME) compiled successfully!${RESET}"
+	@$(CC) $(CFLAGS) $(OBJS) $(LIB) ${INCLUDES} -o $(NAME)
+	@echo "${CYAN}$(NAME) compiled successfully!${RESET}"
 
 clean:
 	@rm -f $(OBJS)
 	@echo "${MAGENTA}${NAME} object files cleaned!${RESET}"
-	make -C libft clean
+	make -C libft fclean
 
 fclean: clean
 	@rm -f $(NAME)
 	@echo "${RED}${NAME} binaries cleaned!${RESET}"
-	make -C libft fclean
 
 make_libs:
 	make -C libft
