@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebansse <ebansse@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cguinot <cguinot@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 13:15:41 by ebansse           #+#    #+#             */
-/*   Updated: 2025/05/22 16:51:30 by ebansse          ###   ########.fr       */
+/*   Updated: 2025/05/26 17:26:17 by cguinot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@ void	prompt_loop(t_shell *shell)
 {
 	char	*line;
 	t_cmd	*cmd;
+	t_token	*lst;
 
+	cmd = NULL;
 	message();
 	while (1)
 	{
@@ -38,13 +40,19 @@ void	prompt_loop(t_shell *shell)
 			execute_commands(cmd, shell); // exécute la/les commande(s)
 
 		free_cmds(cmd);*/
+		lst = lexer(line);
+		if (!lst)
+			continue ;
+		print_token(lst);
+		/*cmd = parse_input(lst);*/
 		free(line);
 	}
 }
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
+	t_env	*env;
 
 	(void)argc;
 	(void)argv;
@@ -52,7 +60,13 @@ int	main(int argc, char **argv)
 	/*shell.env = init_env(envp);*/ // à écrire : copie de envp dans t_env*
 	shell.last_status = 0;
 	shell.running = 1;
-
+	env = ft_copy_envp_to_list(envp, 0);
+	if (!env)
+	{
+		ft_putendl_fd(envp, 0);
+		return (1);
+	}
+	ft_env(env);
 	prompt_loop(&shell);
 
 	/*free_env(shell.env);*/

@@ -65,12 +65,33 @@ typedef struct s_shell
 	int		running;	 // état du shell (utile pour signaux)
 }	t_shell;
 
+/*lexer.c*/
+t_token	*lexer(char *line);
+int	count_word_tokens(t_token *head);
+
 /*utils.c*/
 bool	ft_isspace(char c);
 char	*substrdup(const char *src, int start, int len);
 void	message(void);
-t_token	*lexer(char *line);
+
+/*parser.c*/
+void	print_token(t_token *lst);
+t_cmd	*parse_tokens(t_token *tokens);
+t_token *test_lexer(char *line);
+
+/*env*/
+t_env	*ft_copy_envp_to_list(char **envp, int i);
+void	set_env_value(t_env **env, const char *key, const char *value);
+char	*get_env_value(t_env *env, const char *key);
+void	ft_env(t_env *env);
 
 # define PROMPT_PRINT "\033[1;35mminishell $ \033[0m"
+# define MEMORY_ERROR "Memory allocation error"
+# define COMMAND_NOT_FOUND "Command not found"
+# define PERMISSION_DENIED "Permission denied"
+# define FILE_NOT_FOUND "No such file or directory"
+# define INVALID_REDIR "Invalid redirection syntax"
+# define HEREDOC_EOF "heredoc EOF reached"
+# define HEREDOC_ERROR "Heredoc error"
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ebansse <ebansse@student.42.fr>            +#+  +:+       +#+        */
+/*   By: cguinot <cguinot@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 17:13:35 by ebansse           #+#    #+#             */
-/*   Updated: 2025/05/22 13:15:53 by ebansse          ###   ########.fr       */
+/*   Updated: 2025/05/26 16:05:38 by cguinot          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,18 @@ void	message(void)
 		"▓█▓▒░▒▓████████▓▒░▒▓████████▓▒░▒▓████████▓▒░ \n"
 	);
 	printf("\033[0m");
+}
+
+void	print_token(t_token *lst)
+{
+    while (lst != NULL)
+    {
+        if (lst->value)
+            printf("value = %s / type = %d\n", lst->value, lst->type);
+        else
+            printf("value = (null) / type = %d\n", lst->type);
+        lst = lst->next;
+    }
 }
 
 bool	ft_isspace(char c)

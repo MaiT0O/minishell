@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ebansse <ebansse@student.42.fr>            +#+  +:+       +#+         #
+#    By: cguinot <cguinot@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/15 11:03:46 by ebansse           #+#    #+#              #
-#    Updated: 2025/05/22 16:52:33 by ebansse          ###   ########.fr        #
+#    Updated: 2025/05/26 17:28:33 by cguinot          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,9 @@ CFLAGS = #-Wall -Wextra -Werror
 INCLUDES = -I ./libft
 LIB = ./libft/libft.a -lreadline
 SRCS = main.c lexer.c utils.c parser.c
-OBJS = $(SRCS:.c=.o)
+SRCS_ENV = env/env_init.c env/env_utils.c
+SRCS_BUILTINS = builtins/ft_env.c
+OBJS = $(SRCS:.c=.o) $(SRCS_ENV:.c=.o) $(SRCS_BUILTINS:.c=.o)
 NAME = minishell
 
 #colors
