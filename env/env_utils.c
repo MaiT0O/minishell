@@ -20,7 +20,7 @@ char	*get_env_value(t_env *env, const char *key)
 			return (env->value);
 		env = env->next;
 	}
-	return (NULL);
+	return ("");
 }
 void	set_env_value(t_env **env, const char *key, const char *value)
 {

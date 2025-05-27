@@ -83,24 +83,35 @@ int	tokenisation(t_token **head, char *line, int i)
 	return (i);
 }
 
-int	env_char(char *line, int i)
+bool	lex_double_quote(t_token *head, t_env *env, char *line, int i)
 {
-	if (line[i] <= 'A' || line[i] >= 'Z')
-		return (0);
-	while (line[++i])
-	{
-		if ((line[i] >= 'A' && line[i] <= 'Z') || (line[i] >= 'a' && line[i] <= 'z') || (line[i] >= 0 && line[i] <= 9) || line[i] == '_')
-			continue ;
-		else
-			return (0);
-	}
-	return (i);
-}
+	int		start_quote;
+	int		start_env;
+	size_t	env_len;
 
-t_token	*lexer(char *line)
+	start_quote = i + 1;
+	while (line[++i] && line[i] != 34)
+	{
+		if (line[i] == '$' && line[i + 1] && (ft_isalpha(line[i + 1]) || line[i + 1] == '_'))
+		{
+			i++;
+			start_env = i;
+			while (ft_isalnum(line[i]) || line[i] == '_')
+				i++;
+			env_len = i - start_env;
+			
+
+		}
+	}
+	if (line[i] == '\0')
+		return (printf("Unclosed double quote\n"), false);
+}
+t_token	*lexer(char *line, t_env *env)
 {
 	int			i;
-	int			start;
+	int			start_quote;
+	int			start_env;
+	int			end_env;
 	t_token		*head;
 
 	head = NULL;
@@ -109,24 +120,16 @@ t_token	*lexer(char *line)
 	{
 		if (line[i] == 39)
 		{
-			start = ++i;
-			while (line[i++] && line[i] != 39);
+			start_quote = i+1;
+			while (line[++i] && line[i] != 39);
 			if (line[i] == '\0')
 				return (printf("Unclosed single quote\n"), NULL);
-			add_token(head, new_token(substrdup(line, start, i - start)
+			add_token(head, new_token(substrdup(line, start_quote, i - start_quote)
 				, T_WORD));
 		}
 		if (line[i] == 34)
 		{
-			start = ++i;
-			while (line[i++] && line[i] != 34)
-			{
-				if (line[i] == '$')
-				{
-					start = ++i;
-					if (env_char(line, i) != 0)
-				}
-			}
+			
 		}
 		if (ft_isspace(line[i]))
 		{

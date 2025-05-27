@@ -63,7 +63,7 @@ int	main(int argc, char **argv, char **envp)
 	env = ft_copy_envp_to_list(envp, 0);
 	if (!env)
 	{
-		ft_putendl_fd(envp, 0);
+		ft_putendl_fd(*envp, 0);
 		return (1);
 	}
 	ft_env(env);
