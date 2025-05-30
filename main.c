@@ -31,16 +31,13 @@ void	prompt_loop(t_shell *shell)
 		if (*line)
 			add_history(line);
 
-		// (Étape future) expansion des variables d'environnement
-		/*line = expand_variables(line, shell->env);
-
-		// (Étape future) analyse syntaxique
+		/*// (Étape future) analyse syntaxique
 		cmd = parse_input(line);
 		if (cmd)
 			execute_commands(cmd, shell); // exécute la/les commande(s)
 
 		free_cmds(cmd);*/
-		lst = lexer(line);
+		lst = lexer(line, shell->env);
 		if (!lst)
 			continue ;
 		print_token(lst);
@@ -52,21 +49,21 @@ void	prompt_loop(t_shell *shell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
-	t_env	*env;
+	t_env	*envi;
 
 	(void)argc;
 	(void)argv;
 
-	/*shell.env = init_env(envp);*/ // à écrire : copie de envp dans t_env*
 	shell.last_status = 0;
 	shell.running = 1;
-	env = ft_copy_envp_to_list(envp, 0);
-	if (!env)
+	envi = ft_copy_envp_to_list(envp, 0);
+	if (!envi)
 	{
 		ft_putendl_fd(*envp, 0);
 		return (1);
 	}
-	ft_env(env);
+	shell.env = envi;
+	ft_env(envi);
 	prompt_loop(&shell);
 
 	/*free_env(shell.env);*/

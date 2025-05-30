@@ -14,7 +14,7 @@ CC = gcc
 CFLAGS = #-Wall -Wextra -Werror
 INCLUDES = -I ./libft
 LIB = ./libft/libft.a -lreadline
-SRCS = main.c lexer.c utils.c parser.c
+SRCS = main.c lexer.c utils.c parser.c free.c
 SRCS_ENV = env/env_init.c env/env_utils.c
 SRCS_BUILTINS = builtins/ft_env.c
 OBJS = $(SRCS:.c=.o) $(SRCS_ENV:.c=.o) $(SRCS_BUILTINS:.c=.o)

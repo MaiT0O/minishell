@@ -66,7 +66,7 @@ typedef struct s_shell
 }	t_shell;
 
 /*lexer.c*/
-t_token	*lexer(char *line);
+t_token	*lexer(char *line, t_env *env);
 int	count_word_tokens(t_token *head);
 
 /*utils.c*/
@@ -84,6 +84,10 @@ t_env	*ft_copy_envp_to_list(char **envp, int i);
 void	set_env_value(t_env **env, const char *key, const char *value);
 char	*get_env_value(t_env *env, const char *key);
 void	ft_env(t_env *env);
+
+/*free.c*/
+void	free_tokens(t_token *head);
+void	free_env(t_env *env);
 
 # define PROMPT_PRINT "\033[1;35mminishell $ \033[0m"
 # define MEMORY_ERROR "Memory allocation error"

@@ -74,8 +74,8 @@ int	tokenisation(t_token **head, char *line, int i)
 	else
 	{
 		start = i;
-		while (line[i] && !ft_isspace(line[i]) && line[i] != '|'
-			&& line[i] != '<' && line[i] != '>')
+		while (line[i] && !ft_isspace(line[i]) && line[i] != '|' && line[i]
+			!= '<' && line[i] != '>' && line[i] != 34 && line[i] != 39)
 			i++;
 		return (add_token(head, new_token(substrdup(line, start, i - start)
 					, T_WORD)), i);
@@ -83,28 +83,55 @@ int	tokenisation(t_token **head, char *line, int i)
 	return (i);
 }
 
-bool	lex_double_quote(t_token *head, t_env *env, char *line, int i)
+char	*str_append_char(char *dest, char c)
 {
-	int		start_quote;
+	size_t	len;
+	char *new;
+	
+	len = 0;
+	if (dest != NULL)
+		len = ft_strlen(dest);
+	
+	new = malloc(len + 2);
+	if (!new)
+		return (NULL);
+
+	if (dest)
+		strcpy(new, dest);
+	new[len] = c;
+	new[len + 1] = '\0';
+
+	free(dest);
+	return (new);
+}
+
+char	*expand_variables(t_env *env, char *line, int i)
+{
 	int		start_env;
 	size_t	env_len;
+	char	*result;
+	char	*key;
+	char	*val;
 
-	start_quote = i + 1;
-	while (line[++i] && line[i] != 34)
+	while (line[i])
 	{
-		if (line[i] == '$' && line[i + 1] && (ft_isalpha(line[i + 1]) || line[i + 1] == '_'))
+		if (line[i] == '$' && line[i + 1] && (ft_isalpha(line[i + 1])
+			|| line[i + 1] == '_'))
 		{
-			i++;
-			start_env = i;
+			start_env = ++i;
 			while (ft_isalnum(line[i]) || line[i] == '_')
 				i++;
 			env_len = i - start_env;
-			
-
+			key = substrdup(line, start_env, env_len);
+			val = get_env_value(env, key);
+			result = ft_strjoin(result, val);
+			free(key);
 		}
+		else
+			result = str_append_char(result, line[i++]);
 	}
-	if (line[i] == '\0')
-		return (printf("Unclosed double quote\n"), false);
+	free(line);
+	return (result);
 }
 t_token	*lexer(char *line, t_env *env)
 {
@@ -124,19 +151,26 @@ t_token	*lexer(char *line, t_env *env)
 			while (line[++i] && line[i] != 39);
 			if (line[i] == '\0')
 				return (printf("Unclosed single quote\n"), NULL);
-			add_token(head, new_token(substrdup(line, start_quote, i - start_quote)
+			add_token(&head, new_token(substrdup(line, start_quote, i - start_quote)
 				, T_WORD));
+			i++;
 		}
-		if (line[i] == 34)
+		else if (line[i] == 34)
 		{
-			
+			start_quote = i+1;
+			while (line[++i] && line[i] != 34);
+			if (line[i] == '\0')
+				return (printf("Unclosed double quote\n"), NULL);
+			add_token(&head, new_token(expand_variables(env, substrdup(line, start_quote, i - start_quote), 0), T_WORD));
+			i++;
 		}
-		if (ft_isspace(line[i]))
+		else if (ft_isspace(line[i]))
 		{
 			i++;
 			continue ;
 		}
-		i = tokenisation(&head, line, i);
+		else
+			i = tokenisation(&head, line, i);
 	}
 	return (head);
 }
