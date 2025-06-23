@@ -6,7 +6,7 @@
 /*   By: ebansse <ebansse@student.42perpignan.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 13:15:29 by cguinot           #+#    #+#             */
-/*   Updated: 2025/06/23 15:07:12 by ebansse          ###   ########.fr       */
+/*   Updated: 2025/06/23 16:37:43 by ebansse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,14 @@ void	handle_sigint_interactive(int sig)
 
 void	handle_sigint_command(int sig)
 {
-	(void)sig;
-	g_signal_received = SIGINT;
+	g_signal_received = sig;
 	write(STDOUT_FILENO, "\n", 1);
+}
+
+void	handle_sigquit_command(int sig)
+{
+	g_signal_received = sig;
+	write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 }
 
 void	setup_signals(int mode)
@@ -48,7 +53,7 @@ void	setup_signals(int mode)
 	else if (mode == 1)
 	{
 		sa_int.sa_handler = handle_sigint_command;
-		sa_quit.sa_handler = SIG_IGN;
+		sa_quit.sa_handler = handle_sigquit_command;
 	}
 	else if (mode == 2)
 	{
@@ -64,6 +69,11 @@ void	check_and_handle_signals(t_shell *shell)
 	if (g_signal_received == SIGINT)
 	{
 		shell->last_status = 130;
+		g_signal_received = 0;
+	}
+	else if (g_signal_received == SIGQUIT)
+	{
+		shell->last_status = 131;
 		g_signal_received = 0;
 	}
 }

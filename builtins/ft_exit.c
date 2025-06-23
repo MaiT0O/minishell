@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cguinot <cesar.guinot66@gmail.com>         +#+  +:+       +#+        */
+/*   By: ebansse <ebansse@student.42perpignan.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 14:04:24 by cguinot           #+#    #+#             */
-/*   Updated: 2025/06/05 15:44:53 by cguinot          ###   ########.fr       */
+/*   Updated: 2025/06/23 16:39:15 by ebansse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,3 @@ void	ft_exit(char **args, int last_status)
 	exit_code = ft_atoi(args[1]);
 	ft_quit((unsigned char)exit_code);
 }
-
-//A REVOIR EN ENTIER ABSOLUMENT PAS SUR 

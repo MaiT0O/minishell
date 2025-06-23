@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cguinot <cesar.guinot66@gmail.com>         +#+  +:+       +#+        */
+/*   By: ebansse <ebansse@student.42perpignan.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 17:28:32 by cguinot           #+#    #+#             */
-/*   Updated: 2025/06/05 17:41:47 by cguinot          ###   ########.fr       */
+/*   Updated: 2025/06/23 16:11:24 by ebansse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,21 @@ int	open_heredoc(char *delimiter)
 	return (fd);
 }
 
-static int	open_redir_file(t_redir *redir)
+int	open_redir_file(t_redir *redir)
 {
+	int	fd;
+
 	if (redir->type == T_REDIR_IN)
-		return (open(redir->filename, O_RDONLY));
+	{
+		fd = open(redir->filename, O_RDONLY);
+		if (fd < 0)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			perror(redir->filename);
+			return (-1);
+		}
+		return (fd);
+	}
 	else if (redir->type == T_REDIR_OUT)
 		return (open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644));
 	else if (redir->type == T_REDIR_APPEND)
@@ -59,14 +70,13 @@ void	apply_file_redirections(t_redir *redir)
 	while (redir)
 	{
 		fd = open_redir_file(redir);
-		if (fd >= 0)
-		{
-			if (redir->type == T_REDIR_IN || redir->type == T_HEREDOC)
-				dup2(fd, STDIN_FILENO);
-			else
-				dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
+		if (fd < 0)
+			exit(1);
+		if (redir->type == T_REDIR_IN || redir->type == T_HEREDOC)
+			dup2(fd, STDIN_FILENO);
+		else
+			dup2(fd, STDOUT_FILENO);
+		close(fd);
 		redir = redir->next;
 	}
 }
@@ -81,11 +91,7 @@ int	apply_redirections_builtin(t_redir *redir_list, int *save_in, int *save_out)
 	{
 		fd = open_redir_file(redir_list);
 		if (fd < 0)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			perror(redir_list->filename);
 			return (1);
-		}
 		if (redir_list->type == T_REDIR_IN || redir_list->type == T_HEREDOC)
 			dup2(fd, STDIN_FILENO);
 		else
